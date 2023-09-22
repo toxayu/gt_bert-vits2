@@ -9,8 +9,6 @@
     
     `pip install -r requirements`  
 
-###  Git Clone 原始的程式碼
-```git clone https://github.com/fishaudio/Bert-VITS2.git```
 
 
 ### 下載 Bert models 到 Bert-Vits
@@ -61,11 +59,15 @@ Line 46: default=2 可以適度調高，以加快速度。
 ```
     parser.add_argument("--num_processes", type=int, default=2)
 ```
-執成完後，`dataset/` 下面會出會很多 .pt 檔
+
+執行 `python bert_gen.py`，
+執行完後，`dataset/` 下面會出會很多 .pt 檔
 
 ## 配置訓練設置
 ### 下載底模
 `logs/[characterName]/`
+
+底下會有 3 個檔案，只供訓練，不能推論。
 ### configs
 `configs/config.json` 中的 `batch_size` 改成 4，在 GTX 3060 上才跑得動
 ### train_ms.py
@@ -81,25 +83,36 @@ python train_ms.py -c configs/config.json -m sunday
 ```
 
 
-##  Gastom Version
-### 素材資料夾格式
+##  TL;DR - Gastom Version
+
+### 準備程式碼與素材
+
+#### 下載修改好的程式碼
+```git clone https://github.com/toxayu/gt_bert-vits2.git```
+
+#### 素材資料夾格式
 建立 `raw` 資料夾，底下依角色分資料夾，分別放入音檔
 
-### 將音檔與逐字稿對映
+#### 將音檔與逐字稿對映
 將角色的逐字稿寫入 `filelists/genshin.list`
 
-### 文字預處理
-```python preprocess_text.py```
+#### 修改底模名字
+`logs/pretrained/ -> logs/[characterName]/`
 
-執行完成後檢查  `filelists/genshin_cleaned.list`
+### 執行預處理
 
-### 音檔重採樣
-```python resample.py```
+```
+# 文字預處理
+python preprocess_text.py
 
-### 修改底模名字
-`logs/pretrained/` 
+# 音檔重採樣
+python resample.py
+
+# 生成 BERT 音檔
+python bert_gen.py
+```
 
 ### 開始訓練
 ```
-python train_ms.py -c configs/config.json -m sunday
+python train_ms.py -c configs/config.json -m [characterName]
 ```
